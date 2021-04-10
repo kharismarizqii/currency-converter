@@ -11,11 +11,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
+        android:elevation="4dp"
         android:paddingBottom="78dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:elevation="4dp">
+        tools:ignore="UnusedAttribute">
 
         <TextView
             android:id="@+id/tv_title"
@@ -45,7 +46,8 @@
             android:paddingHorizontal="16dp"
             app:layout_constraintEnd_toStartOf="@+id/cv_before"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_title" />
+            app:layout_constraintTop_toBottomOf="@id/tv_title"
+            android:importantForAutofill="no" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cv_before"
@@ -61,7 +63,10 @@
             <Spinner
                 android:id="@+id/sp_before"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:gravity="end"
+                android:paddingHorizontal="12dp"
+                android:spinnerMode="dropdown" />
 
         </androidx.cardview.widget.CardView>
 
@@ -88,6 +93,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:background="@drawable/rounded_edit_text"
+            android:importantForAutofill="no"
             android:inputType="numberDecimal"
             android:paddingHorizontal="16dp"
             app:layout_constraintEnd_toStartOf="@+id/cv_after"
@@ -108,7 +114,10 @@
             <Spinner
                 android:id="@+id/sp_after"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:gravity="end"
+                android:paddingHorizontal="12dp"
+                android:spinnerMode="dropdown" />
 
         </androidx.cardview.widget.CardView>
 
@@ -149,8 +158,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="@string/history"
-        app:layout_constraintEnd_toEndOf="parent"
         android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView" />
 
@@ -164,7 +173,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
-        tools:listitem="@layout/item_history"/>
+        tools:listitem="@layout/item_history" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

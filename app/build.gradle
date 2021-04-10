@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -14,6 +15,7 @@ android {
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -46,6 +48,7 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
 
     implementation "io.reactivex.rxjava2:rxjava:$rxjava_version"
     implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
@@ -70,4 +73,7 @@ dependencies {
     implementation "androidx.hilt:hilt-lifecycle-viewmodel:$hilt_jetpack_version"
     kapt "androidx.hilt:hilt-compiler:$hilt_jetpack_version"
     kaptAndroidTest "androidx.hilt:hilt-compiler:$hilt_jetpack_version"
+
+    implementation "androidx.activity:activity-ktx:$activity_ktx_version"
+    implementation "androidx.fragment:fragment-ktx:$fragment_ktx_version"
 }
