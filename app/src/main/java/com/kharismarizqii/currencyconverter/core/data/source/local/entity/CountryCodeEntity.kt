@@ -1,4 +1,4 @@
-package com.kharismarizqii.currencyconverter.core.data.source.remote.local.entity
+package com.kharismarizqii.currencyconverter.core.data.source.local.entity
 
 import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
