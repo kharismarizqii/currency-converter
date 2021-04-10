@@ -1,6 +1,20 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext.kotlin_version = "1.4.32"
+
+    ext.retrofit_version = "2.9.0"
+    ext.logging_interceptor_version = "4.9.0"
+
+    ext.rxjava_version = "2.2.19"
+    ext.rxandroid_version = "2.1.1"
+
+    ext.room_version = "2.2.6"
+
+    ext.lifecycle_version = "2.3.1"
+
+    ext.hilt_version = '2.28-alpha'
+    ext.hilt_jetpack_version = '1.0.0-alpha02'
+
     repositories {
         google()
         jcenter()
