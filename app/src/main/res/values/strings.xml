@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Currency Converter</string>
+    <string name="swap_icon">Swap Icon</string>
+    <string name="history">History</string>
+</resources>
