@@ -10,10 +10,11 @@ import com.kharismarizqii.currencyconverter.core.utils.DataMapper
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class CurrencyRepository (
+class CurrencyRepository @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
     private val localDataSource: LocalDataSource,
     private val appExecutors: AppExecutors
