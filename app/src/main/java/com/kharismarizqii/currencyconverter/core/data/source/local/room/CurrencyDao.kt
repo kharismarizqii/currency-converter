@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.kharismarizqii.currencyconverter.core.data.source.local.entity.CountryCodeEntity
+import com.kharismarizqii.currencyconverter.core.data.source.local.entity.ExchangeEntity
 import io.reactivex.Completable
 import io.reactivex.Flowable
 
@@ -15,4 +16,10 @@ interface CurrencyDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertListCode(code: List<CountryCodeEntity>): Completable
+
+    @Query("SELECT * FROM exchange WHERE id = :id")
+    fun getExchange(id: String): Flowable<ExchangeEntity>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertExchange(exchange: ExchangeEntity): Completable
 }

@@ -32,4 +32,23 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
 
         return resultData.toFlowable(BackpressureStrategy.BUFFER)
     }
+
+    @SuppressLint("CheckResult")
+    fun getExchange(from: String, to: String): Flowable<ApiResponse<Double>>{
+        val resultData = PublishSubject.create<ApiResponse<Double>>()
+
+        val client = apiService.getExchange(from, to)
+
+        client.subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
+            .take(1)
+            .subscribe({
+                resultData.onNext((if (it!=null) ApiResponse.Success(it) else ApiResponse.Empty))
+            }, { error ->
+                resultData.onNext(ApiResponse.Error(error.message.toString()))
+                Log.e("RemoteDataSource", error.toString())
+            })
+
+        return resultData.toFlowable(BackpressureStrategy.BUFFER)
+    }
 }

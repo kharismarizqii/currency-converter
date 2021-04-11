@@ -1,9 +1,11 @@
 package com.kharismarizqii.currencyconverter.core.data
 
 import com.kharismarizqii.currencyconverter.core.data.source.local.LocalDataSource
+import com.kharismarizqii.currencyconverter.core.data.source.local.entity.ExchangeEntity
 import com.kharismarizqii.currencyconverter.core.data.source.remote.RemoteDataSource
 import com.kharismarizqii.currencyconverter.core.data.source.remote.network.ApiResponse
 import com.kharismarizqii.currencyconverter.core.domain.model.CountryCode
+import com.kharismarizqii.currencyconverter.core.domain.model.Exchange
 import com.kharismarizqii.currencyconverter.core.domain.repository.ICurrencyRepository
 import com.kharismarizqii.currencyconverter.core.utils.AppExecutors
 import com.kharismarizqii.currencyconverter.core.utils.DataMapper
@@ -23,7 +25,7 @@ class CurrencyRepository @Inject constructor(
         object : NetworkBoundResource<List<CountryCode>, List<String>>(appExecutors){
             override fun loadFromDB(): Flowable<List<CountryCode>> {
                 return localDataSource.getListCode().map {
-                    DataMapper.mapEntitiesToDomain(it)
+                    DataMapper.mapCodeEntitiesToDomain(it)
                 }
             }
 
@@ -35,13 +37,44 @@ class CurrencyRepository @Inject constructor(
             }
 
             override fun saveCallResult(data: List<String>) {
-                val codeList = DataMapper.mapResponsesToEntities(data)
+                val codeList = DataMapper.mapCodeResponsesToEntities(data)
                 localDataSource.insertListCode(codeList)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe()
             }
 
+        }.asFlowable()
+
+    override fun getExchange(from: String, to: String): Flowable<Resource<Exchange>> =
+        object : NetworkBoundResource<Exchange, Double>(appExecutors){
+            override fun loadFromDB(): Flowable<Exchange> {
+                val id = "${from}to${to}"
+                return localDataSource.getExchange(id).map {
+                    DataMapper.mapExchangeEntitiesToDomain(it)
+                }
+            }
+
+            override fun shouldFetch(data: Exchange?): Boolean =
+                data == null
+
+            override fun createCall(): Flowable<ApiResponse<Double>> {
+                return remoteDataSource.getExchange(from, to)
+            }
+
+            override fun saveCallResult(data: Double) {
+                val id = "${from}to${to}"
+                val exchange = ExchangeEntity(
+                    id,
+                    from,
+                    to,
+                    data
+                )
+                localDataSource.insertExchange(exchange)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe()
+            }
         }.asFlowable()
 
 }
