@@ -5,9 +5,13 @@ import com.kharismarizqii.currencyconverter.core.domain.model.CountryCode
 import com.kharismarizqii.currencyconverter.core.domain.model.Exchange
 import com.kharismarizqii.currencyconverter.core.domain.repository.ICurrencyRepository
 import io.reactivex.Flowable
+import retrofit2.Call
 import javax.inject.Inject
 
 class CurrencyInteractor @Inject constructor(private val currencyRepository: ICurrencyRepository): CurrencyUseCase {
     override fun getListCode(): Flowable<Resource<List<CountryCode>>> = currencyRepository.getListCode()
     override fun getExchange(from: String, to: String): Flowable<Resource<Exchange>> = currencyRepository.getExchange(from, to)
+    override fun getExchangeCall(from: String, to: String): Call<String> {
+        return currencyRepository.getExchangeCall(from,to)
+    }
 }

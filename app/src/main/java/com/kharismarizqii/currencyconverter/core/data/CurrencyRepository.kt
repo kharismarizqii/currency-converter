@@ -1,5 +1,6 @@
 package com.kharismarizqii.currencyconverter.core.data
 
+import android.util.Log
 import com.kharismarizqii.currencyconverter.core.data.source.local.LocalDataSource
 import com.kharismarizqii.currencyconverter.core.data.source.local.entity.ExchangeEntity
 import com.kharismarizqii.currencyconverter.core.data.source.remote.RemoteDataSource
@@ -12,6 +13,7 @@ import com.kharismarizqii.currencyconverter.core.utils.DataMapper
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import retrofit2.Call
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -59,6 +61,7 @@ class CurrencyRepository @Inject constructor(
                 data == null
 
             override fun createCall(): Flowable<ApiResponse<Double>> {
+                Log.e("CurrencyRepository", "masuk")
                 return remoteDataSource.getExchange(from, to)
             }
 
@@ -76,5 +79,9 @@ class CurrencyRepository @Inject constructor(
                     .subscribe()
             }
         }.asFlowable()
+
+    override fun getExchangeCall(from: String, to: String): Call<String> {
+        return remoteDataSource.getExchangeCall(from,to)
+    }
 
 }

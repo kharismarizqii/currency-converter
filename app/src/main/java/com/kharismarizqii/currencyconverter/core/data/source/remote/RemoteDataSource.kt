@@ -9,6 +9,9 @@ import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -37,13 +40,13 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
     fun getExchange(from: String, to: String): Flowable<ApiResponse<Double>>{
         val resultData = PublishSubject.create<ApiResponse<Double>>()
 
-        val client = apiService.getExchange(from, to)
+        val client = apiService.getExchange(from, to, 1)
 
         client.subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
             .take(1)
             .subscribe({
-                resultData.onNext((if (it!=null) ApiResponse.Success(it) else ApiResponse.Empty))
+                resultData.onNext((if (it.isEmpty()) ApiResponse.Success(it.toDouble()) else ApiResponse.Empty))
             }, { error ->
                 resultData.onNext(ApiResponse.Error(error.message.toString()))
                 Log.e("RemoteDataSource", error.toString())
@@ -51,4 +54,10 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
 
         return resultData.toFlowable(BackpressureStrategy.BUFFER)
     }
+
+    fun getExchangeCall(from: String, to: String): Call<String> {
+        val client = apiService.getExchangeCall(from,to,1)
+        return client
+    }
+
 }
