@@ -3,6 +3,8 @@ package com.kharismarizqii.currencyconverter
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -26,7 +28,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var arrayAdapter: ArrayAdapter<String>
-    private var dataExchange: Exchange? = null
+    private var currentSpBefore = ""
+    private var currentSpAfter = ""
 
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,6 +52,8 @@ class MainActivity : AppCompatActivity() {
         },{
             Log.e("BeforeStream", "subscribe: ${it.message}")
         })
+
+        eventSpinnerHandling()
 
         viewModel.currency.observe(this, { code ->
             if (code != null) {
@@ -85,32 +90,48 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun getExchange(it: String?) {
-        Log.e("getExchange", "${binding.spBefore.selectedItem.toString()}, ${binding.spAfter.selectedItem.toString()}")
-        viewModel.getExchange(binding.spBefore.selectedItem.toString(), binding.spAfter.selectedItem.toString()).observe(this,  { exchange ->
-            Log.e("DataExchange null", "ExchangeData:")
-            binding.etAfter.setText("123124")
-            if (exchange != null) {
-                when (exchange) {
-                    is Resource.Success -> {
-                        dataExchange = exchange.data
-                        Log.e("DataExchange null", "DataExchange: $dataExchange")
-                        val converted =
-                            it?.let { it1 -> dataExchange?.amount?.times(it1.toDouble()) }
-                        binding.etAfter.setText(converted.toString())
-                    }
-                }
+    private fun eventSpinnerHandling() {
+        binding.spBefore.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                getExchangeCall(binding.etBefore.text.toString())
             }
-        })
 
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+
+            }
+
+        }
+
+        binding.spAfter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                getExchangeCall(binding.etBefore.text.toString())
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+
+            }
+
+        }
     }
 
     private fun getExchangeCall(it: String?){
+
         viewModel.getExchangeCall(binding.spBefore.selectedItem.toString(), binding.spAfter.selectedItem.toString()).enqueue(object : Callback<String>{
             override fun onResponse(call: Call<String>, response: Response<String>) {
                 Log.e("Response", "${response.body()}")
-                val converted = it?.toDouble()?.times(response.body()?.toDouble()!!)
-                binding.etAfter.setText(converted.toString())
+                if (it=="0"){
+                    binding.etAfter.setText("0")
+                } else {
+                    val converted = it?.toDouble()?.times(response.body()?.toDouble()!!)
+                    binding.etAfter.setText(converted.toString())
+                }
+
+                if (currentSpAfter!=binding.spAfter.selectedItem.toString()
+                    || currentSpBefore!=binding.spBefore.selectedItem.toString()){
+                    currentSpBefore = binding.spBefore.selectedItem.toString()
+                    currentSpAfter = binding.spAfter.selectedItem.toString()
+                    binding.tvBasicCurrency.text = "1 $currentSpBefore - ${response.body()} $currentSpAfter"
+                }
             }
 
             override fun onFailure(call: Call<String>, t: Throwable) {

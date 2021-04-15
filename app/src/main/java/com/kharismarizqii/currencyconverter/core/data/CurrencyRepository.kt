@@ -49,7 +49,7 @@ class CurrencyRepository @Inject constructor(
         }.asFlowable()
 
     override fun getExchange(from: String, to: String): Flowable<Resource<Exchange>> =
-        object : NetworkBoundResource<Exchange, Double>(appExecutors){
+        object : NetworkBoundResource<Exchange, String>(appExecutors){
             override fun loadFromDB(): Flowable<Exchange> {
                 val id = "${from}to${to}"
                 return localDataSource.getExchange(id).map {
@@ -60,18 +60,18 @@ class CurrencyRepository @Inject constructor(
             override fun shouldFetch(data: Exchange?): Boolean =
                 data == null
 
-            override fun createCall(): Flowable<ApiResponse<Double>> {
+            override fun createCall(): Flowable<ApiResponse<String>> {
                 Log.e("CurrencyRepository", "masuk")
                 return remoteDataSource.getExchange(from, to)
             }
 
-            override fun saveCallResult(data: Double) {
+            override fun saveCallResult(data: String) {
                 val id = "${from}to${to}"
                 val exchange = ExchangeEntity(
                     id,
                     from,
                     to,
-                    data
+                    data.toDouble()
                 )
                 localDataSource.insertExchange(exchange)
                     .subscribeOn(Schedulers.io())

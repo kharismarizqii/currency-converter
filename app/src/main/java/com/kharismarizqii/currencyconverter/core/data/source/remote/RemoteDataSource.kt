@@ -37,8 +37,8 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
     }
 
     @SuppressLint("CheckResult")
-    fun getExchange(from: String, to: String): Flowable<ApiResponse<Double>>{
-        val resultData = PublishSubject.create<ApiResponse<Double>>()
+    fun getExchange(from: String, to: String): Flowable<ApiResponse<String>>{
+        val resultData = PublishSubject.create<ApiResponse<String>>()
 
         val client = apiService.getExchange(from, to, 1)
 
@@ -46,7 +46,8 @@ class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
             .observeOn(AndroidSchedulers.mainThread())
             .take(1)
             .subscribe({
-                resultData.onNext((if (it.isEmpty()) ApiResponse.Success(it.toDouble()) else ApiResponse.Empty))
+                Log.d("RemoteDataSource", "$it")
+                resultData.onNext(if (it.isNotEmpty()) ApiResponse.Success(it) else ApiResponse.Empty)
             }, { error ->
                 resultData.onNext(ApiResponse.Error(error.message.toString()))
                 Log.e("RemoteDataSource", error.toString())
