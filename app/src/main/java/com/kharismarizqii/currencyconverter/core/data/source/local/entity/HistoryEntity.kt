@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 data class HistoryEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    val id: Int,
+    val id: Long = 0,
     @ColumnInfo(name = "from_code")
     val fromCode: String,
     @ColumnInfo(name = "to_code")

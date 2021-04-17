@@ -52,7 +52,6 @@ object DataMapper {
         val list = ArrayList<History>()
         input.map {
             val history = History(
-                it.id,
                 it.fromCode,
                 it.toCode,
                 it.fromValue,
@@ -65,11 +64,10 @@ object DataMapper {
 
     fun mapHistoryDomainToEntity(input: History): HistoryEntity{
         return HistoryEntity(
-            input.id,
-            input.fromCode,
-            input.toCode,
-            input.fromValue,
-            input.toValue
+            fromCode = input.fromCode,
+            toCode = input.toCode,
+            fromValue = input.fromValue,
+            toValue = input.toValue
         )
     }
 }
