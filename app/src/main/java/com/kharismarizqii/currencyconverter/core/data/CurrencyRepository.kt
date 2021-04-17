@@ -11,6 +11,7 @@ import com.kharismarizqii.currencyconverter.core.domain.model.History
 import com.kharismarizqii.currencyconverter.core.domain.repository.ICurrencyRepository
 import com.kharismarizqii.currencyconverter.core.utils.AppExecutors
 import com.kharismarizqii.currencyconverter.core.utils.DataMapper
+import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -91,8 +92,12 @@ class CurrencyRepository @Inject constructor(
         }
     }
 
-    override fun insertHistory(history: History) {
-        localDataSource.insertHistory(DataMapper.mapHistoryDomainToEntity(history))
+    override fun insertHistory(history: History): Completable {
+        Log.e("CurrencyRepository", "insertHistory()")
+        return Completable.fromAction({
+            localDataSource.insertHistory(DataMapper.mapHistoryDomainToEntity(history))
+        }).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
     }
 
 }

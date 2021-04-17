@@ -9,9 +9,12 @@ import android.widget.ArrayAdapter
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.jakewharton.rxbinding2.widget.RxTextView
 import com.kharismarizqii.currencyconverter.core.data.Resource
 import com.kharismarizqii.currencyconverter.core.domain.model.Exchange
+import com.kharismarizqii.currencyconverter.core.domain.model.History
+import com.kharismarizqii.currencyconverter.core.ui.HistoryAdapter
 import com.kharismarizqii.currencyconverter.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -19,7 +22,9 @@ import io.reactivex.schedulers.Schedulers
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -28,6 +33,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var arrayAdapter: ArrayAdapter<String>
+    private lateinit var historyAdapter: HistoryAdapter
     private var currentSpBefore = ""
     private var currentSpAfter = ""
 
@@ -38,6 +44,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         lifecycle.addObserver(viewModel)
+        historyAdapter = HistoryAdapter()
+        with(binding.rvHistory){
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            adapter = historyAdapter
+        }
 
         val beforeStream = RxTextView.textChanges(binding.etBefore)
             .skipInitialValue()
@@ -54,7 +66,20 @@ class MainActivity : AppCompatActivity() {
         })
 
         eventSpinnerHandling()
+        observeSpinner()
+        showHistory()
+    }
 
+    private fun showHistory() {
+        viewModel.history.observe(this, {
+            Log.e("MainActivity", "showHistory() $it")
+            if (it!=null){
+                historyAdapter.setData(it)
+            }
+        })
+    }
+
+    private fun observeSpinner() {
         viewModel.currency.observe(this, { code ->
             if (code != null) {
                 when (code) {
@@ -88,6 +113,7 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
+
     }
 
     private fun eventSpinnerHandling() {
@@ -117,6 +143,7 @@ class MainActivity : AppCompatActivity() {
     private fun getExchangeCall(it: String?){
 
         viewModel.getExchangeCall(binding.spBefore.selectedItem.toString(), binding.spAfter.selectedItem.toString()).enqueue(object : Callback<String>{
+            @SuppressLint("CheckResult")
             override fun onResponse(call: Call<String>, response: Response<String>) {
                 Log.e("Response", "${response.body()}")
                 if (it=="0"){
@@ -124,13 +151,26 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     val converted = it?.toDouble()?.times(response.body()?.toDouble()!!)
                     binding.etAfter.setText(converted.toString())
+                    viewModel.insertHistory(
+                        History(
+                            binding.spBefore.selectedItem.toString(),
+                            binding.spAfter.selectedItem.toString(),
+                            it!!.toDouble(),
+                            converted!!
+                        )
+                    ).subscribe({
+                        Log.e("MainActivity", "InsertHistory: success")
+                    }, {
+                        Log.e("MainActivity", "InsertHistory: ${it.message}")
+                    })
                 }
 
                 if (currentSpAfter!=binding.spAfter.selectedItem.toString()
                     || currentSpBefore!=binding.spBefore.selectedItem.toString()){
                     currentSpBefore = binding.spBefore.selectedItem.toString()
                     currentSpAfter = binding.spAfter.selectedItem.toString()
-                    binding.tvBasicCurrency.text = "1 $currentSpBefore - ${response.body()} $currentSpAfter"
+                    val basicCurrency = "1 $currentSpBefore - ${response.body()} $currentSpAfter"
+                    binding.tvBasicCurrency.text = basicCurrency
                 }
             }
 

@@ -1,10 +1,12 @@
 package com.kharismarizqii.currencyconverter.core.domain.usecase
 
+import android.util.Log
 import com.kharismarizqii.currencyconverter.core.data.Resource
 import com.kharismarizqii.currencyconverter.core.domain.model.CountryCode
 import com.kharismarizqii.currencyconverter.core.domain.model.Exchange
 import com.kharismarizqii.currencyconverter.core.domain.model.History
 import com.kharismarizqii.currencyconverter.core.domain.repository.ICurrencyRepository
+import io.reactivex.Completable
 import io.reactivex.Flowable
 import retrofit2.Call
 import javax.inject.Inject
@@ -18,7 +20,8 @@ class CurrencyInteractor @Inject constructor(private val currencyRepository: ICu
 
     override fun getHistories(): Flowable<List<History>> = currencyRepository.getHistories()
 
-    override fun insertHistory(history: History) {
-        currencyRepository.insertHistory(history)
+    override fun insertHistory(history: History): Completable {
+        Log.e("CurrencyInteractor", "insertHistory()")
+        return currencyRepository.insertHistory(history)
     }
 }

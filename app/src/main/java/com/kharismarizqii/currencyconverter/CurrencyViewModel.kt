@@ -1,11 +1,14 @@
 package com.kharismarizqii.currencyconverter
 
+import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LiveDataReactiveStreams
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.toLiveData
 import com.kharismarizqii.currencyconverter.core.domain.model.History
 import com.kharismarizqii.currencyconverter.core.domain.usecase.CurrencyUseCase
+import io.reactivex.Completable
 
 class CurrencyViewModel @ViewModelInject constructor(private val currencyUseCase: CurrencyUseCase): ViewModel(),
     LifecycleObserver {
@@ -15,8 +18,9 @@ class CurrencyViewModel @ViewModelInject constructor(private val currencyUseCase
 
     fun getExchangeCall(fromSet: String, toSet: String) = currencyUseCase.getExchangeCall(fromSet, toSet)
 
-    fun getHistories() = currencyUseCase.getHistories()
-    fun insertHistory(history: History) {
-        insertHistory(history)
+    val history = currencyUseCase.getHistories().toLiveData()
+    fun insertHistory(history: History): Completable {
+        Log.e("CurrencyViewModel", "insertHistory()")
+        return currencyUseCase.insertHistory(history)
     }
 }
