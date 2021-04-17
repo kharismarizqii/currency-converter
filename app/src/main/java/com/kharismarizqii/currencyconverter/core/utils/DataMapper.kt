@@ -2,8 +2,10 @@ package com.kharismarizqii.currencyconverter.core.utils
 
 import com.kharismarizqii.currencyconverter.core.data.source.local.entity.CountryCodeEntity
 import com.kharismarizqii.currencyconverter.core.data.source.local.entity.ExchangeEntity
+import com.kharismarizqii.currencyconverter.core.data.source.local.entity.HistoryEntity
 import com.kharismarizqii.currencyconverter.core.domain.model.CountryCode
 import com.kharismarizqii.currencyconverter.core.domain.model.Exchange
+import com.kharismarizqii.currencyconverter.core.domain.model.History
 
 object DataMapper {
     fun mapCodeResponsesToEntities(input: List<String>): List<CountryCodeEntity>{
@@ -43,6 +45,31 @@ object DataMapper {
             input.from,
             input.to,
             input.amount
+        )
+    }
+
+    fun mapHistoryEntitiesToDomain(input: List<HistoryEntity>): List<History>{
+        val list = ArrayList<History>()
+        input.map {
+            val history = History(
+                it.id,
+                it.fromCode,
+                it.toCode,
+                it.fromValue,
+                it.toValue
+            )
+            list.add(history)
+        }
+        return list
+    }
+
+    fun mapHistoryDomainToEntity(input: History): HistoryEntity{
+        return HistoryEntity(
+            input.id,
+            input.fromCode,
+            input.toCode,
+            input.fromValue,
+            input.toValue
         )
     }
 }

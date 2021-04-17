@@ -3,6 +3,7 @@ package com.kharismarizqii.currencyconverter.core.domain.usecase
 import com.kharismarizqii.currencyconverter.core.data.Resource
 import com.kharismarizqii.currencyconverter.core.domain.model.CountryCode
 import com.kharismarizqii.currencyconverter.core.domain.model.Exchange
+import com.kharismarizqii.currencyconverter.core.domain.model.History
 import com.kharismarizqii.currencyconverter.core.domain.repository.ICurrencyRepository
 import io.reactivex.Flowable
 import retrofit2.Call
@@ -13,5 +14,11 @@ class CurrencyInteractor @Inject constructor(private val currencyRepository: ICu
     override fun getExchange(from: String, to: String): Flowable<Resource<Exchange>> = currencyRepository.getExchange(from, to)
     override fun getExchangeCall(from: String, to: String): Call<String> {
         return currencyRepository.getExchangeCall(from,to)
+    }
+
+    override fun getHistories(): Flowable<List<History>> = currencyRepository.getHistories()
+
+    override fun insertHistory(history: History) {
+        currencyRepository.insertHistory(history)
     }
 }

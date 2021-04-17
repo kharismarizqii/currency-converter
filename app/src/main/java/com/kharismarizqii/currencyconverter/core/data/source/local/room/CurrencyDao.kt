@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.kharismarizqii.currencyconverter.core.data.source.local.entity.CountryCodeEntity
 import com.kharismarizqii.currencyconverter.core.data.source.local.entity.ExchangeEntity
+import com.kharismarizqii.currencyconverter.core.data.source.local.entity.HistoryEntity
 import io.reactivex.Completable
 import io.reactivex.Flowable
 
@@ -22,4 +23,10 @@ interface CurrencyDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertExchange(exchange: ExchangeEntity): Completable
+
+    @Query("SELECT * FROM history")
+    fun getHistories(): Flowable<List<HistoryEntity>>
+
+    @Insert
+    fun insertHistory(historyEntity: HistoryEntity): Completable
 }

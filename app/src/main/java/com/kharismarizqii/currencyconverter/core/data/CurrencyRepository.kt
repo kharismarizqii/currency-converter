@@ -7,6 +7,7 @@ import com.kharismarizqii.currencyconverter.core.data.source.remote.RemoteDataSo
 import com.kharismarizqii.currencyconverter.core.data.source.remote.network.ApiResponse
 import com.kharismarizqii.currencyconverter.core.domain.model.CountryCode
 import com.kharismarizqii.currencyconverter.core.domain.model.Exchange
+import com.kharismarizqii.currencyconverter.core.domain.model.History
 import com.kharismarizqii.currencyconverter.core.domain.repository.ICurrencyRepository
 import com.kharismarizqii.currencyconverter.core.utils.AppExecutors
 import com.kharismarizqii.currencyconverter.core.utils.DataMapper
@@ -82,6 +83,16 @@ class CurrencyRepository @Inject constructor(
 
     override fun getExchangeCall(from: String, to: String): Call<String> {
         return remoteDataSource.getExchangeCall(from,to)
+    }
+
+    override fun getHistories(): Flowable<List<History>> {
+        return localDataSource.getHistories().map {
+            DataMapper.mapHistoryEntitiesToDomain(it)
+        }
+    }
+
+    override fun insertHistory(history: History) {
+        localDataSource.insertHistory(DataMapper.mapHistoryDomainToEntity(history))
     }
 
 }

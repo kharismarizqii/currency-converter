@@ -2,6 +2,7 @@ package com.kharismarizqii.currencyconverter.core.data.source.local
 
 import com.kharismarizqii.currencyconverter.core.data.source.local.entity.CountryCodeEntity
 import com.kharismarizqii.currencyconverter.core.data.source.local.entity.ExchangeEntity
+import com.kharismarizqii.currencyconverter.core.data.source.local.entity.HistoryEntity
 import com.kharismarizqii.currencyconverter.core.data.source.local.room.CurrencyDao
 import io.reactivex.Flowable
 import javax.inject.Inject
@@ -14,4 +15,7 @@ class LocalDataSource @Inject constructor(private val currencyDao: CurrencyDao) 
 
     fun getExchange(id: String): Flowable<ExchangeEntity> = currencyDao.getExchange(id)
     fun insertExchange(exchange: ExchangeEntity) = currencyDao.insertExchange(exchange)
+
+    fun getHistories(): Flowable<List<HistoryEntity>> = currencyDao.getHistories()
+    fun insertHistory(historyEntity: HistoryEntity) = currencyDao.insertHistory(historyEntity)
 }
