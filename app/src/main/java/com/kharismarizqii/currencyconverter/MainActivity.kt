@@ -8,15 +8,15 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jakewharton.rxbinding2.widget.RxTextView
 import com.kharismarizqii.currencyconverter.core.data.Resource
-import com.kharismarizqii.currencyconverter.core.domain.model.Exchange
 import com.kharismarizqii.currencyconverter.core.domain.model.History
 import com.kharismarizqii.currencyconverter.core.ui.HistoryAdapter
 import com.kharismarizqii.currencyconverter.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
+import io.reactivex.*
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import retrofit2.Call
@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
 
         lifecycle.addObserver(viewModel)
         historyAdapter = HistoryAdapter()
-        with(binding.rvHistory){
+        with(binding.rvHistory) {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(this@MainActivity)
             adapter = historyAdapter
@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
 
         beforeStream.subscribe({
             getExchangeCall(it)
-        },{
+        }, {
             Log.e("BeforeStream", "subscribe: ${it.message}")
         })
 
@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
     private fun showHistory() {
         viewModel.history.observe(this, {
             Log.e("MainActivity", "showHistory() $it")
-            if (it!=null){
+            if (it != null) {
                 historyAdapter.setData(it)
             }
         })
@@ -128,7 +128,7 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        binding.spAfter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+        binding.spAfter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 getExchangeCall(binding.etBefore.text.toString())
             }
@@ -140,35 +140,42 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun getExchangeCall(it: String?){
-        if (it?.isEmpty() == true || it == null){
+    private fun getExchangeCall(it: String?) {
+        if (it?.isEmpty() == true || it == null) {
             binding.etAfter.setText("")
         } else {
-            viewModel.getExchangeCall(binding.spBefore.selectedItem.toString(), binding.spAfter.selectedItem.toString()).enqueue(object : Callback<String>{
+            viewModel.getExchangeCall(
+                binding.spBefore.selectedItem.toString(),
+                binding.spAfter.selectedItem.toString()
+            ).enqueue(object : Callback<String> {
                 @SuppressLint("CheckResult")
                 override fun onResponse(call: Call<String>, response: Response<String>) {
                     Log.e("Response", "${response.body()}")
-                    if (it=="0"){
+                    if (it == "0") {
                         binding.etAfter.setText("0")
                     } else {
                         val converted = it?.toDouble()?.times(response.body()?.toDouble()!!)
                         binding.etAfter.setText(converted.toString())
-                        viewModel.insertHistory(
-                            History(
-                                binding.spBefore.selectedItem.toString(),
-                                binding.spAfter.selectedItem.toString(),
-                                it!!.toDouble(),
-                                converted!!
-                            )
+                        val history = History(
+                            binding.spBefore.selectedItem.toString(),
+                            binding.spAfter.selectedItem.toString(),
+                            it!!.toDouble(),
+                            converted!!
                         )
+                        Completable.fromAction({
+                            viewModel.insertHistory(history)
+                        }).subscribeOn(Schedulers.io())
+                            .subscribe()
                         showHistory()
                     }
 
-                    if (currentSpAfter!=binding.spAfter.selectedItem.toString()
-                        || currentSpBefore!=binding.spBefore.selectedItem.toString()){
+                    if (currentSpAfter != binding.spAfter.selectedItem.toString()
+                        || currentSpBefore != binding.spBefore.selectedItem.toString()
+                    ) {
                         currentSpBefore = binding.spBefore.selectedItem.toString()
                         currentSpAfter = binding.spAfter.selectedItem.toString()
-                        val basicCurrency = "1 $currentSpBefore - ${response.body()} $currentSpAfter"
+                        val basicCurrency =
+                            "1 $currentSpBefore - ${response.body()} $currentSpAfter"
                         binding.tvBasicCurrency.text = basicCurrency
                     }
                 }

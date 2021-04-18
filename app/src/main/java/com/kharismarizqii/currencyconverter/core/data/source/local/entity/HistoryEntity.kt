@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "history")
 data class HistoryEntity(
     @PrimaryKey(autoGenerate = true)
-    var id: Int,
+    val id: Int = 0,
     @ColumnInfo(name = "from_code")
     val fromCode: String,
     @ColumnInfo(name = "to_code")
@@ -16,6 +16,4 @@ data class HistoryEntity(
     val fromValue: Double,
     @ColumnInfo(name = "to_value")
     val toValue: Double
-){
-
-}
+)

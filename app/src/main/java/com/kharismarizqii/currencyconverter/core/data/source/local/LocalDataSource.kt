@@ -1,11 +1,15 @@
 package com.kharismarizqii.currencyconverter.core.data.source.local
 
+import android.util.Log
 import com.kharismarizqii.currencyconverter.core.data.source.local.entity.CountryCodeEntity
 import com.kharismarizqii.currencyconverter.core.data.source.local.entity.ExchangeEntity
 import com.kharismarizqii.currencyconverter.core.data.source.local.entity.HistoryEntity
 import com.kharismarizqii.currencyconverter.core.data.source.local.room.CurrencyDao
-import io.reactivex.Completable
 import io.reactivex.Flowable
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.Callable
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,6 +23,14 @@ class LocalDataSource @Inject constructor(private val currencyDao: CurrencyDao) 
 
     fun getHistories(): Flowable<List<HistoryEntity>> = currencyDao.getHistories()
     fun insertHistory(historyEntity: HistoryEntity) {
-        currencyDao.insertHistory(historyEntity)
+        Observable.fromCallable(object : Callable<Boolean>{
+            override fun call(): Boolean {
+                currencyDao.insertHistory(historyEntity)
+                return true
+            }
+
+        }).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
     }
 }
