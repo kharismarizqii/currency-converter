@@ -18,7 +18,7 @@ class LocalDataSource @Inject constructor(private val currencyDao: CurrencyDao) 
     fun insertExchange(exchange: ExchangeEntity) = currencyDao.insertExchange(exchange)
 
     fun getHistories(): Flowable<List<HistoryEntity>> = currencyDao.getHistories()
-    fun insertHistory(historyEntity: HistoryEntity): Completable {
-        return currencyDao.insertHistory(historyEntity)
+    fun insertHistory(historyEntity: HistoryEntity) {
+        currencyDao.insertHistory(historyEntity)
     }
 }

@@ -88,16 +88,14 @@ class CurrencyRepository @Inject constructor(
 
     override fun getHistories(): Flowable<List<History>> {
         return localDataSource.getHistories().map {
+            Log.e("Currency Repository", "getHistories(): List: $it")
             DataMapper.mapHistoryEntitiesToDomain(it)
         }
     }
 
-    override fun insertHistory(history: History): Completable {
+    override fun insertHistory(history: History) {
         Log.e("CurrencyRepository", "insertHistory()")
-        return Completable.fromAction({
-            localDataSource.insertHistory(DataMapper.mapHistoryDomainToEntity(history))
-        }).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+        localDataSource.insertHistory(DataMapper.mapHistoryDomainToEntity(history))
     }
 
 }

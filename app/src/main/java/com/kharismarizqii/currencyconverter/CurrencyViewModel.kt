@@ -19,8 +19,8 @@ class CurrencyViewModel @ViewModelInject constructor(private val currencyUseCase
     fun getExchangeCall(fromSet: String, toSet: String) = currencyUseCase.getExchangeCall(fromSet, toSet)
 
     val history = currencyUseCase.getHistories().toLiveData()
-    fun insertHistory(history: History): Completable {
+    fun insertHistory(history: History){
         Log.e("CurrencyViewModel", "insertHistory()")
-        return currencyUseCase.insertHistory(history)
+        currencyUseCase.insertHistory(history)
     }
 }

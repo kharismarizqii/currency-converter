@@ -64,6 +64,7 @@ object DataMapper {
 
     fun mapHistoryDomainToEntity(input: History): HistoryEntity{
         return HistoryEntity(
+            id = 1,
             fromCode = input.fromCode,
             toCode = input.toCode,
             fromValue = input.fromValue,

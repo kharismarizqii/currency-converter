@@ -141,43 +141,45 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getExchangeCall(it: String?){
-
-        viewModel.getExchangeCall(binding.spBefore.selectedItem.toString(), binding.spAfter.selectedItem.toString()).enqueue(object : Callback<String>{
-            @SuppressLint("CheckResult")
-            override fun onResponse(call: Call<String>, response: Response<String>) {
-                Log.e("Response", "${response.body()}")
-                if (it=="0"){
-                    binding.etAfter.setText("0")
-                } else {
-                    val converted = it?.toDouble()?.times(response.body()?.toDouble()!!)
-                    binding.etAfter.setText(converted.toString())
-                    viewModel.insertHistory(
-                        History(
-                            binding.spBefore.selectedItem.toString(),
-                            binding.spAfter.selectedItem.toString(),
-                            it!!.toDouble(),
-                            converted!!
+        if (it?.isEmpty() == true || it == null){
+            binding.etAfter.setText("")
+        } else {
+            viewModel.getExchangeCall(binding.spBefore.selectedItem.toString(), binding.spAfter.selectedItem.toString()).enqueue(object : Callback<String>{
+                @SuppressLint("CheckResult")
+                override fun onResponse(call: Call<String>, response: Response<String>) {
+                    Log.e("Response", "${response.body()}")
+                    if (it=="0"){
+                        binding.etAfter.setText("0")
+                    } else {
+                        val converted = it?.toDouble()?.times(response.body()?.toDouble()!!)
+                        binding.etAfter.setText(converted.toString())
+                        viewModel.insertHistory(
+                            History(
+                                binding.spBefore.selectedItem.toString(),
+                                binding.spAfter.selectedItem.toString(),
+                                it!!.toDouble(),
+                                converted!!
+                            )
                         )
-                    ).subscribe({
-                        Log.e("MainActivity", "InsertHistory: success")
-                    }, {
-                        Log.e("MainActivity", "InsertHistory: ${it.message}")
-                    })
+                        showHistory()
+                    }
+
+                    if (currentSpAfter!=binding.spAfter.selectedItem.toString()
+                        || currentSpBefore!=binding.spBefore.selectedItem.toString()){
+                        currentSpBefore = binding.spBefore.selectedItem.toString()
+                        currentSpAfter = binding.spAfter.selectedItem.toString()
+                        val basicCurrency = "1 $currentSpBefore - ${response.body()} $currentSpAfter"
+                        binding.tvBasicCurrency.text = basicCurrency
+                    }
                 }
 
-                if (currentSpAfter!=binding.spAfter.selectedItem.toString()
-                    || currentSpBefore!=binding.spBefore.selectedItem.toString()){
-                    currentSpBefore = binding.spBefore.selectedItem.toString()
-                    currentSpAfter = binding.spAfter.selectedItem.toString()
-                    val basicCurrency = "1 $currentSpBefore - ${response.body()} $currentSpAfter"
-                    binding.tvBasicCurrency.text = basicCurrency
+                override fun onFailure(call: Call<String>, t: Throwable) {
+                    Log.e("Failure", "${t.message}")
                 }
-            }
 
-            override fun onFailure(call: Call<String>, t: Throwable) {
-                Log.e("Failure", "${t.message}")
-            }
+            })
 
-        })
+        }
+
     }
 }

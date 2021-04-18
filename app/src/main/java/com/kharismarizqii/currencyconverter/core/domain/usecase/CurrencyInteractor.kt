@@ -20,8 +20,8 @@ class CurrencyInteractor @Inject constructor(private val currencyRepository: ICu
 
     override fun getHistories(): Flowable<List<History>> = currencyRepository.getHistories()
 
-    override fun insertHistory(history: History): Completable {
+    override fun insertHistory(history: History){
         Log.e("CurrencyInteractor", "insertHistory()")
-        return currencyRepository.insertHistory(history)
+        currencyRepository.insertHistory(history)
     }
 }

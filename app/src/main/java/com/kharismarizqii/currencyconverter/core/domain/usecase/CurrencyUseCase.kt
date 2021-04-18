@@ -13,5 +13,5 @@ interface CurrencyUseCase {
     fun getExchange(from: String, to: String): Flowable<Resource<Exchange>>
     fun getExchangeCall(from: String, to: String): Call<String>
     fun getHistories(): Flowable<List<History>>
-    fun insertHistory(history: History) : Completable
+    fun insertHistory(history: History)
 }
