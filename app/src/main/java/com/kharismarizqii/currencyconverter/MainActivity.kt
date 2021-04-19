@@ -13,6 +13,7 @@ import com.jakewharton.rxbinding2.widget.RxTextView
 import com.kharismarizqii.currencyconverter.core.data.Resource
 import com.kharismarizqii.currencyconverter.core.domain.model.History
 import com.kharismarizqii.currencyconverter.core.ui.HistoryAdapter
+import com.kharismarizqii.currencyconverter.core.utils.Helper.makeStatusBarTransparent
 import com.kharismarizqii.currencyconverter.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.*
@@ -44,6 +45,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        actionBar?.hide()
+        makeStatusBarTransparent()
 
         lifecycle.addObserver(viewModel)
         historyAdapter = HistoryAdapter()
