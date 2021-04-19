@@ -51,6 +51,15 @@ class MainActivity : AppCompatActivity() {
 
         lifecycle.addObserver(viewModel)
         historyAdapter = HistoryAdapter()
+        historyAdapter.onItemClick = { selectedData ->
+            Log.e("MainActivity", "onItemClick $selectedData")
+            viewModel.deleteHistory(selectedData.id)
+        }
+
+        binding.tvClearAll.setOnClickListener {
+            viewModel.deleteAllHistory()
+        }
+
         with(binding.rvHistory) {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(this@MainActivity)
@@ -76,13 +85,25 @@ class MainActivity : AppCompatActivity() {
         showHistory()
     }
 
+
     private fun showHistory() {
         viewModel.history.observe(this, {
-            Log.e("MainActivity", "showHistory() $it")
             if (it != null) {
+                hideRecent(it.isEmpty())
                 historyAdapter.setData(it)
             }
         })
+    }
+
+    private fun hideRecent(isEmpty: Boolean) {
+        if (isEmpty){
+            binding.textView.visibility = View.INVISIBLE
+            binding.tvClearAll.visibility = View.INVISIBLE
+        } else {
+            binding.textView.visibility = View.VISIBLE
+            binding.tvClearAll.visibility = View.VISIBLE
+        }
+
     }
 
     private fun observeSpinner() {
@@ -166,10 +187,10 @@ class MainActivity : AppCompatActivity() {
                         converted = df.format(converted.toBigDecimal()).toDouble()
                         binding.etAfter.setText(converted.toString())
                         val history = History(
-                            binding.spBefore.selectedItem.toString(),
-                            binding.spAfter.selectedItem.toString(),
-                            it.toDouble(),
-                            converted
+                            fromCode = binding.spBefore.selectedItem.toString(),
+                            toCode = binding.spAfter.selectedItem.toString(),
+                            fromValue = it.toDouble(),
+                            toValue = converted
                         )
                         Completable.fromAction({
                             viewModel.insertHistory(history)

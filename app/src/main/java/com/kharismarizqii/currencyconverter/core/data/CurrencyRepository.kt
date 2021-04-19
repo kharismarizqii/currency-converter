@@ -98,4 +98,12 @@ class CurrencyRepository @Inject constructor(
         localDataSource.insertHistory(DataMapper.mapHistoryDomainToEntity(history))
     }
 
+    override fun deleteHistory(id: Int) {
+        localDataSource.deleteHistory(id)
+    }
+
+    override fun deleteAllHistory() {
+        localDataSource.deleteAllHistory()
+    }
+
 }

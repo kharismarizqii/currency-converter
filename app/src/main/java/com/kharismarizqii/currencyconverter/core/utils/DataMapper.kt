@@ -52,6 +52,7 @@ object DataMapper {
         val list = ArrayList<History>()
         input.map {
             val history = History(
+                it.id,
                 it.fromCode,
                 it.toCode,
                 it.fromValue,

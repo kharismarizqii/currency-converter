@@ -14,4 +14,6 @@ interface CurrencyUseCase {
     fun getExchangeCall(from: String, to: String): Call<String>
     fun getHistories(): Flowable<List<History>>
     fun insertHistory(history: History)
+    fun deleteHistory(id: Int)
+    fun deleteAllHistory()
 }

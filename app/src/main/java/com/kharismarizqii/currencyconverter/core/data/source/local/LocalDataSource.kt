@@ -33,4 +33,28 @@ class LocalDataSource @Inject constructor(private val currencyDao: CurrencyDao) 
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe()
     }
+
+    fun deleteHistory(id: Int){
+        Observable.fromCallable(object : Callable<Boolean>{
+            override fun call(): Boolean {
+                currencyDao.deleteHistory(id)
+                return true
+            }
+
+        }).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
+    }
+
+    fun deleteAllHistory(){
+        Observable.fromCallable(object : Callable<Boolean>{
+            override fun call(): Boolean {
+                currencyDao.deleteAllHistory()
+                return true
+            }
+
+        }).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
+    }
 }

@@ -23,4 +23,10 @@ class CurrencyViewModel @ViewModelInject constructor(private val currencyUseCase
         Log.e("CurrencyViewModel", "insertHistory()")
         currencyUseCase.insertHistory(history)
     }
+    fun deleteHistory(id: Int){
+        currencyUseCase.deleteHistory(id)
+    }
+    fun deleteAllHistory(){
+        currencyUseCase.deleteAllHistory()
+    }
 }

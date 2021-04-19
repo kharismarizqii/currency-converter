@@ -1,9 +1,6 @@
 package com.kharismarizqii.currencyconverter.core.data.source.local.room
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.kharismarizqii.currencyconverter.core.data.source.local.entity.CountryCodeEntity
 import com.kharismarizqii.currencyconverter.core.data.source.local.entity.ExchangeEntity
 import com.kharismarizqii.currencyconverter.core.data.source.local.entity.HistoryEntity
@@ -29,5 +26,11 @@ interface CurrencyDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertHistory(history: HistoryEntity)
+
+    @Query("DELETE FROM history WHERE id=:id")
+    fun deleteHistory(id: Int)
+
+    @Query("DELETE FROM history")
+    fun deleteAllHistory()
 
 }

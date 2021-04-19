@@ -12,6 +12,8 @@ class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() 
 
     private var listData = ArrayList<History>()
 
+    var onItemClick : ((History) -> Unit)? = null
+
     fun setData(newListData: List<History>?){
         if (newListData == null) return
         listData.clear()
@@ -27,6 +29,9 @@ class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() 
                 val after = "${history.toValue} ${history.toCode}"
                 tvHistoryBefore.text = before
                 tvHistoryAfter.text = after
+                btnDelete.setOnClickListener {
+                    onItemClick?.invoke(history)
+                }
             }
         }
     }

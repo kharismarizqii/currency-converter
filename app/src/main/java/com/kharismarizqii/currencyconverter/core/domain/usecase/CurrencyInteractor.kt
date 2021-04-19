@@ -24,4 +24,12 @@ class CurrencyInteractor @Inject constructor(private val currencyRepository: ICu
         Log.e("CurrencyInteractor", "insertHistory()")
         currencyRepository.insertHistory(history)
     }
+
+    override fun deleteHistory(id: Int) {
+        currencyRepository.deleteHistory(id)
+    }
+
+    override fun deleteAllHistory() {
+        currencyRepository.deleteAllHistory()
+    }
 }
