@@ -154,6 +154,22 @@
             tools:text="1 USD - 14000 IDR" />
     </androidx.cardview.widget.CardView>
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/ani_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleX="0.5"
+        android:scaleY="0.5"
+        android:elevation="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/cardView"
+        app:layout_constraintEnd_toEndOf="@+id/cardView"
+        app:layout_constraintStart_toStartOf="@+id/cardView"
+        app:layout_constraintTop_toTopOf="@+id/cardView"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="animation_loading.json"
+        app:lottie_loop="true"
+        tools:targetApi="lollipop" />
+
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"

@@ -17,7 +17,6 @@ import com.kharismarizqii.currencyconverter.core.utils.Helper.makeStatusBarTrans
 import com.kharismarizqii.currencyconverter.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.*
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import retrofit2.Call
@@ -51,6 +50,7 @@ class MainActivity : AppCompatActivity() {
 
         lifecycle.addObserver(viewModel)
         historyAdapter = HistoryAdapter()
+        showTextLoading(true)
         historyAdapter.onItemClick = { selectedData ->
             Log.e("MainActivity", "onItemClick $selectedData")
             viewModel.deleteHistory(selectedData.id)
@@ -96,7 +96,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun hideRecent(isEmpty: Boolean) {
-        if (isEmpty){
+        if (isEmpty) {
             binding.textView.visibility = View.INVISIBLE
             binding.tvClearAll.visibility = View.INVISIBLE
         } else {
@@ -146,6 +146,7 @@ class MainActivity : AppCompatActivity() {
     private fun eventSpinnerHandling() {
         binding.spBefore.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                showTextLoading(true)
                 getExchangeCall(binding.etBefore.text.toString())
             }
 
@@ -157,6 +158,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.spAfter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                showTextLoading(true)
                 getExchangeCall(binding.etBefore.text.toString())
             }
 
@@ -207,7 +209,12 @@ class MainActivity : AppCompatActivity() {
                         val df = DecimalFormat("#.####")
                         df.roundingMode = RoundingMode.CEILING
                         val basicCurrency =
-                            "1.0 $currentSpBefore - ${df.format(response.body()?.toBigDecimal())} $currentSpAfter"
+                            "1.0 $currentSpBefore - ${
+                                df.format(
+                                    response.body()?.toBigDecimal()
+                                )
+                            } $currentSpAfter"
+                        showTextLoading(false)
                         binding.tvBasicCurrency.text = basicCurrency
                     }
                 }
@@ -220,5 +227,10 @@ class MainActivity : AppCompatActivity() {
 
         }
 
+    }
+
+    private fun showTextLoading(isLoading: Boolean) {
+        binding.aniLoading.visibility = if (isLoading) View.VISIBLE else View.INVISIBLE
+        binding.tvBasicCurrency.visibility = if(isLoading) View.INVISIBLE else View.VISIBLE
     }
 }
