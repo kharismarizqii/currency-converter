@@ -24,7 +24,7 @@ interface CurrencyDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertExchange(exchange: ExchangeEntity): Completable
 
-    @Query("SELECT * FROM history")
+    @Query("SELECT * FROM history ORDER BY id DESC")
     fun getHistories(): Flowable<List<HistoryEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

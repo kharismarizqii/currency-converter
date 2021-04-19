@@ -22,6 +22,8 @@ import io.reactivex.schedulers.Schedulers
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.math.RoundingMode
+import java.text.DecimalFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
@@ -154,13 +156,16 @@ class MainActivity : AppCompatActivity() {
                     if (it == "0") {
                         binding.etAfter.setText("0")
                     } else {
-                        val converted = it?.toDouble()?.times(response.body()?.toDouble()!!)
+                        var converted = it.toDouble().times(response.body()?.toDouble()!!)
+                        val df = DecimalFormat("#.###")
+                        df.roundingMode = RoundingMode.CEILING
+                        converted = df.format(converted.toBigDecimal()).toDouble()
                         binding.etAfter.setText(converted.toString())
                         val history = History(
                             binding.spBefore.selectedItem.toString(),
                             binding.spAfter.selectedItem.toString(),
-                            it!!.toDouble(),
-                            converted!!
+                            it.toDouble(),
+                            converted
                         )
                         Completable.fromAction({
                             viewModel.insertHistory(history)
@@ -174,8 +179,10 @@ class MainActivity : AppCompatActivity() {
                     ) {
                         currentSpBefore = binding.spBefore.selectedItem.toString()
                         currentSpAfter = binding.spAfter.selectedItem.toString()
+                        val df = DecimalFormat("#.####")
+                        df.roundingMode = RoundingMode.CEILING
                         val basicCurrency =
-                            "1 $currentSpBefore - ${response.body()} $currentSpAfter"
+                            "1.0 $currentSpBefore - ${df.format(response.body()?.toBigDecimal())} $currentSpAfter"
                         binding.tvBasicCurrency.text = basicCurrency
                     }
                 }
